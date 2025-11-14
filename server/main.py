@@ -15,6 +15,8 @@ def handle_client(conn, addr):
                 if not data:
                     break
                 for c, a in clients[:]:
+                    if c == conn:
+                        continue
                     try:
                         c.sendall(data)
                     except (BrokenPipeError, ConnectionResetError, OSError) as e:
