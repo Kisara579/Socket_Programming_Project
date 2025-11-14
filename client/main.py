@@ -13,3 +13,18 @@ except Exception as e:
     exit()
 
     
+def send_message():
+    while True:
+        message = input()
+        if message.lower() == "exit":
+            client_socket.close()
+            print("You left the chat")
+            break
+        client_socket.send(message.encode())
+
+def receive_message():
+    while True:
+        data = client_socket.recv(1024)
+        print(data.decode())
+
+
