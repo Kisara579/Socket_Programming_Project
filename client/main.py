@@ -4,19 +4,23 @@ import threading
 server_ip = "20.205.16.74"
 server_port = 8888
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((server_ip, server_port))
 
-def send_message():
+def get_connection(host, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    return s
+
+def send_message(conn):
     while True:
         message = input()
-        client_socket.send(message.encode())
+        conn.send(message.encode())
 
-def receive_message():
+def receive_message(conn):
     while True:
-        data = client_socket.recv(1024)
+        data = conn.recv(1024)
         print(data.decode())
 
+client_socket = get_connection(server_ip, server_port)
 
-threading.Thread(target=send_message).start()
-threading.Thread(target=receive_message).start()
+threading.Thread(target=send_message, args=(client_socket,)).start()
+threading.Thread(target=receive_message, args=(client_socket,)).start()
