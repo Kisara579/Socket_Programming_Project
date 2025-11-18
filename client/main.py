@@ -1,13 +1,12 @@
-import stat
-from turtle import onclick
 import customtkinter
 import tkinter as tk
 import threading
 from tkinter import E, messagebox
 
-from connection import get_connection, send_message, receive_message, server_ip, server_port
+from connection import get_connection, send_message, receive_message, server_ip, server_port, send_udp_message
 
 connected = False
+isUDP = False
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("blue")
@@ -62,19 +61,38 @@ message_entry.grid(row=0, column=0, sticky="ew", padx=(10, 6), pady=10)
 
 message_entry.bind("<Return>", lambda event: send_button_click())
 
-send_button = customtkinter.CTkButton(
+typeButton = customtkinter.CTkButton(
     input_frame, 
-    text="Send", 
+    text="TCP" if not isUDP else "UDP", 
     width=70,
     height=36,
     corner_radius=18,
     fg_color="#075E54",
     hover_color="#054D44"
 )
+
+typeButton.grid(row=0, column=2, padx=(0, 10), pady=10)
+
+def toggle_protocol():
+    global isUDP
+    isUDP = not isUDP
+    typeButton.configure(text="TCP" if not isUDP else "UDP")
+
+typeButton.configure(command=toggle_protocol)
+
+send_button = customtkinter.CTkButton(
+    input_frame, 
+    text="Send",
+    width=70,
+    height=36,
+    corner_radius=18,
+    fg_color="#075E54",
+    hover_color="#054D44"
+)
+
 send_button.grid(row=0, column=1, padx=(6, 10), pady=10)
 
 send_button.bind("<Button-1>", lambda event: send_button_click())
-
 
 
 def show_error_dialog(message: str) -> None:
@@ -138,6 +156,17 @@ def send_button_click():
 
     message = message_entry.get()
     if message:
+        if isUDP:
+            message = f"[UDP] {message}"
+            try:
+                send_udp_message(message, server_ip)
+                add_message_to_ui(message, origin='sent')
+                message_entry.delete(0, tk.END)
+                return
+            except Exception as e:
+                print(f"Error sending UDP message: {e}")
+                add_message_to_ui(f"Error: Could not send message '{message}'", origin='error')
+                return
         try:
             send_message(client_socket, message)
             add_message_to_ui(message, origin='sent')
