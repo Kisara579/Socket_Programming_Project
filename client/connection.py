@@ -9,7 +9,7 @@ udp_port = 9999
 # Shared UDP socket
 _udp_socket = None
 _udp_lock = threading.Lock()
-_sent_messages = []
+_sent_messages = set()  # Use set for O(1) lookup
 
 def _get_udp_socket():
     """Get or create the shared UDP socket."""
@@ -33,9 +33,9 @@ def send_message(conn, message):
 
 def send_udp_message(message, server_address):
     udp_sock = _get_udp_socket()
-    id = time.time()
-    _sent_messages.append(id)
-    udp_sock.sendto((str(id) + " " + message).encode(), (server_address, udp_port))
+    id = str(time.time())  # Convert to string immediately
+    _sent_messages.add(id)  # Use set.add instead of list.append
+    udp_sock.sendto((id + " " + message).encode(), (server_address, udp_port))
 
 def receive_message(conn, callback):
     while True:
@@ -58,6 +58,9 @@ def receive_udp_message(callback):
             data, addr = udp_sock.recvfrom(1024)
             id, message = data.decode().split(" ", 1)
             if id in _sent_messages:
+                # Clean up old messages to prevent memory leak (keep last 100)
+                if len(_sent_messages) > 100:
+                    _sent_messages.clear()
                 continue
             callback(message)
         except Exception as e:
