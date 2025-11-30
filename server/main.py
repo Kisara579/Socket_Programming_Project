@@ -43,8 +43,6 @@ def udp_echo(data, addr, udp_sock):
     if addr not in udp_clients:
         udp_clients.append(addr)
     for c_addr in udp_clients[:]:
-        if c_addr == addr:
-            continue
         try:
             udp_sock.sendto(data, c_addr)
         except OSError as e:

@@ -1,13 +1,15 @@
 import socket
 import threading
+import time
 
-server_ip = "127.0.0.1"  # localhost for testing
+server_ip = "57.158.27.23"
 server_port = 8888
 udp_port = 9999
 
 # Shared UDP socket
 _udp_socket = None
 _udp_lock = threading.Lock()
+_sent_messages = []
 
 def _get_udp_socket():
     """Get or create the shared UDP socket."""
@@ -31,7 +33,9 @@ def send_message(conn, message):
 
 def send_udp_message(message, server_address):
     udp_sock = _get_udp_socket()
-    udp_sock.sendto(message.encode(), (server_address, udp_port))
+    id = time.time()
+    _sent_messages.append(id)
+    udp_sock.sendto((str(id) + " " + message).encode(), (server_address, udp_port))
 
 def receive_message(conn, callback):
     while True:
@@ -52,7 +56,10 @@ def receive_udp_message(callback):
     while True:
         try:
             data, addr = udp_sock.recvfrom(1024)
-            callback(data.decode())
+            id, message = data.decode().split(" ", 1)
+            if id in _sent_messages:
+                continue
+            callback(message)
         except Exception as e:
             print(f"Error receiving UDP message: {e}")
 
