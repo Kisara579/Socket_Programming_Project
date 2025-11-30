@@ -18,8 +18,7 @@ def _get_udp_socket():
         if _udp_socket is None:
             _udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             _udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            _udp_socket.bind(("", udp_port))
-            print(f"UDP socket bound to port {udp_port}")
+            _udp_socket.bind(("", 0))
         return _udp_socket
 
 def get_connection(host, port):
@@ -51,7 +50,7 @@ def receive_message(conn, callback):
 def receive_udp_message(callback):
     """Receive UDP messages from the server."""
     udp_sock = _get_udp_socket()
-    print(f"UDP listener started on port {udp_port}")
+    print(f"UDP listener started on port {udp_sock.getsockname()[1]}")
     
     while True:
         try:
