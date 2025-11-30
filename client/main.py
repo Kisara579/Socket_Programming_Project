@@ -1,9 +1,9 @@
 import customtkinter
 import tkinter as tk
 import threading
-from tkinter import E, messagebox
+from tkinter import  messagebox
 
-from connection import get_connection, send_message, receive_message, server_ip, server_port, send_udp_message
+from connection import get_connection, send_message, receive_message, server_ip, server_port, send_udp_message, receive_udp_message
 
 connected = False
 isUDP = False
@@ -222,22 +222,16 @@ def add_message_to_ui(message: str, origin: str = 'received') -> None:
 
         bubble.pack(anchor=anchor, pady=6, padx=padx, fill='x', expand=False)
 
-        try:
-            app.after(10, messages_container._parent_canvas.yview_moveto, 1.0)
-        except Exception:
-            pass
-
-    try:
-        app.after(0, _create_bubble)
-    except Exception:
-        try:
-            _create_bubble()
-        except Exception as e:
-            print(f"Error creating bubble: {e}\nMessage: {message}")
-
 threading.Thread(
     target=receive_message, 
     args=(client_socket, add_message_to_ui), 
+    daemon=True
+).start()
+
+# Start UDP receiver thread
+threading.Thread(
+    target=receive_udp_message,
+    args=(add_message_to_ui,),
     daemon=True
 ).start()
 
