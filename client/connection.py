@@ -2,7 +2,6 @@ import socket
 import threading
 
 server_ip = "57.158.27.23"
-# server_ip = "127.0.0.1"
 server_port = 8888
 udp_port = 9999
 

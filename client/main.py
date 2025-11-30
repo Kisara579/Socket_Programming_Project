@@ -221,6 +221,9 @@ def add_message_to_ui(message: str, origin: str = 'received') -> None:
         label.pack(padx=10, pady=6)
 
         bubble.pack(anchor=anchor, pady=6, padx=padx, fill='x', expand=False)
+    
+    # Schedule UI update on the main thread
+    app.after(0, _create_bubble)
 
 threading.Thread(
     target=receive_message, 
