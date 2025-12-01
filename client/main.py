@@ -185,6 +185,9 @@ def add_message_to_ui(message: str, origin: str = 'received') -> None:
     if 'messages_container' not in globals():
         print(message)
         return
+    
+    if message == "[UDP Registration]":
+        return
 
     def _create_bubble():
         if origin == 'sent':
