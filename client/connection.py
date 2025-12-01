@@ -20,12 +20,6 @@ def _get_udp_socket():
             _udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             _udp_socket.bind(("", 0))
             # Register with server immediately so it can send messages to us
-            try:
-                registration_id = str(time.time())
-                _udp_socket.sendto((registration_id + " [UDP Registration]").encode(), (server_ip, udp_port))
-                print(f"Registered UDP client with server at {server_ip}:{udp_port}")
-            except Exception as e:
-                print(f"Warning: Could not register with UDP server: {e}")
         return _udp_socket
 
 def get_connection(host, port):

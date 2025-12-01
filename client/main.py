@@ -8,6 +8,14 @@ from connection import get_connection, send_message, receive_message, server_ip,
 connected = False
 isUDP = False
 
+try:
+    registration_id = str(time.time())
+    send_udp_message(registration_id + " [UDP Registration]")
+    print(f"Registered UDP client with server at {server_ip}:{udp_port}")
+except Exception as e:
+    print(f"Warning: Could not register with UDP server: {e}")
+
+
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("blue")
 
