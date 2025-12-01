@@ -39,6 +39,9 @@ def handle_client(conn, addr):
 
 def udp_echo(data, addr, udp_sock):
     print(f"Received UDP data from {addr}")
+    if "[UDP Registration]" in data.decode():
+        print(f"Registered UDP client with server at {addr}")
+        return
 
     if addr not in udp_clients:
         udp_clients.append(addr)
