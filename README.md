@@ -209,10 +209,11 @@ Educational project for CSCI 21023 course.
 
 ## 👥 Authors
 
-Socket Programming Project Team
-chamesh2019
-kisara579
-SanjanaKaushalya
+Socket Programming Project Team<br>
+[Chamesh Dinuka](https://github.com/chamesh2019)<br>
+[Kisara Beddawala](https://github.com/Kisara579)<br>
+[Sanjana Kaushalya](https://github.com/SanjanaKaushalya)<br>
+<br>
 
 ## 🙏 Acknowledgments
 
