@@ -2,19 +2,13 @@ import customtkinter
 import tkinter as tk
 import threading
 from tkinter import  messagebox
+import time
 
 from connection import get_connection, send_message, receive_message, server_ip, server_port, send_udp_message, receive_udp_message
 
 connected = False
+isUDPConnected = False
 isUDP = False
-
-try:
-    registration_id = str(time.time())
-    send_udp_message(registration_id + " [UDP Registration]")
-    print(f"Registered UDP client with server at {server_ip}:{udp_port}")
-except Exception as e:
-    print(f"Warning: Could not register with UDP server: {e}")
-
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("blue")
@@ -151,7 +145,7 @@ def _connect_background():
             show_error_dialog(f"Could not connect to server at {server_ip}:{server_port}.\nPlease try again later.")
         except Exception:
             pass
-
+    
 threading.Thread(target=_connect_background, daemon=True).start()
 
 
@@ -226,6 +220,13 @@ def add_message_to_ui(message: str, origin: str = 'received') -> None:
             wraplength=280,
             justify=justify
         )
+
+        def _on_click(event):
+            bubble.destroy()
+
+        bubble.bind("<Button-1>", _on_click)
+        label.bind("<Button-1>", _on_click)
+
         label.pack(padx=10, pady=6)
 
         bubble.pack(anchor=anchor, pady=6, padx=padx, fill='x', expand=False)
